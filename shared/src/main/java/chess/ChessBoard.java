@@ -1,7 +1,6 @@
 package chess;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * A chessboard that can hold and rearrange chess pieces.
@@ -10,10 +9,10 @@ import java.util.Map;
  * signature of the existing methods.
  */
 public class ChessBoard {
-    private Map<ChessPosition, ChessPiece> board;
+    private ChessPiece[][] board;
 
     public ChessBoard() {
-        this.board = new HashMap<>();
+        this.board = new ChessPiece[8][8];
     }
 
     /**
@@ -23,7 +22,7 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        board.put(position, piece);
+        board[position.getRow()-1][position.getColumn()-1] = piece;
     }
 
     /**
@@ -34,7 +33,7 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        return board.get(position);
+        return board[position.getRow()-1][position.getColumn()-1];
     }
 
     /**
@@ -42,53 +41,83 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
+        // Start with an empty board
+        this.board = new ChessPiece[8][8];
         ChessPosition currPosition;
         // Insert pawns into the game board
         for (int i = 1; i <= 8; i++ ) {
-            currPosition = new ChessPosition(i, 2);
-            board.put(currPosition, new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN));
-            currPosition = new ChessPosition(i, 7);
-            board.put(currPosition, new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN));
+            currPosition = new ChessPosition(2, i);
+            this.addPiece(currPosition, new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN));
+            currPosition = new ChessPosition(7, i);
+            this.addPiece(currPosition, new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN));
         }
         // Insert all other pieces into the game board
-        for (ChessPiece.PieceType pieceType : ChessPiece.PieceType.values()) {
-            for (int i = 1; i <= 8; i++) {
-                // Insert rooks into the game board
-                if (i == 1 || i == 8) {
-                    currPosition = new ChessPosition(1,i);
-                    board.put(currPosition, new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK));
-                    currPosition = new ChessPosition(8,i);
-                    board.put(currPosition, new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK));
-                }
-                // Insert knights into the game board
-                else if (i == 2 || i == 7) {
-                    currPosition = new ChessPosition(1,i);
-                    board.put(currPosition, new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT));
-                    currPosition = new ChessPosition(8, i);
-                    board.put(currPosition, new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT));
-                }
-                // Insert bishops into the game board
-                else if (i == 3 || i == 6) {
-                    currPosition = new ChessPosition(1,i);
-                    board.put(currPosition, new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP));
-                    currPosition = new ChessPosition(8, i);
-                    board.put(currPosition, new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP));
-                }
-                // Insert kings into the game board
-                else if (i == 4) {
-                    currPosition = new ChessPosition(1, 4);
-                    board.put(currPosition, new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING));
-                    currPosition = new ChessPosition(8, 5);
-                    board.put(currPosition, new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING));
-                }
-                // Insert queens into the game board
-                else if (i == 5) {
-                    currPosition = new ChessPosition(1, 5);
-                    board.put(currPosition, new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN));
-                    currPosition = new ChessPosition(8, 4);
-                    board.put(currPosition, new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN));
-                }
+
+        for (int i = 1; i <= 8; i++) {
+            // Insert rooks into the game board
+            if (i == 1 || i == 8) {
+                this.addPiece(new ChessPosition(1,i), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK));
+                this.addPiece(new ChessPosition(8,i), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK));
+            }
+            // Insert knights into the game board
+            else if (i == 2 || i == 7) {
+                this.addPiece(new ChessPosition(1,i), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT));
+                this.addPiece(new ChessPosition(8, i), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT));
+            }
+            // Insert bishops into the game board
+            else if (i == 3 || i == 6) {
+                this.addPiece(new ChessPosition(1,i), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP));
+                this.addPiece(new ChessPosition(8, i), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP));
+            }
+            // Insert queens into the game board
+            else if (i == 4) {
+                this.addPiece(new ChessPosition(1, i), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN));
+                this.addPiece(new ChessPosition(8, i), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN));
+            }
+            // Insert kings into the game board
+            else if (i == 5) {
+                this.addPiece(new ChessPosition(1, i), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING));
+                this.addPiece(new ChessPosition(8, i), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING));
             }
         }
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ChessBoard that)) return false;
+        return Arrays.deepEquals(board, that.board);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.deepHashCode(board);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 1; i <= 8; i++) {
+            for (int j = 1; j <= 8; j++) {
+                sb.append("|");
+                sb.append((this.getPiece(new ChessPosition(i, j)) != null) ?
+                        this.getPiece(new ChessPosition(i, j)).toString() : "   ");
+            }
+            sb.append("|\n");
+        }
+        return sb.reverse().toString();
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
