@@ -1,8 +1,8 @@
 package chess;
 
+import chess.movement.BishopMovement;
+
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Objects;
 
 /**
  * Represents a single chess piece
@@ -64,7 +64,7 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        Collection<ChessMove> validMoves = new HashSet<>();
+        Collection<ChessMove> validMoves = null;
         ChessPiece currPiece = board.getPiece(myPosition);
 
         int row = myPosition.getRow();
@@ -72,6 +72,17 @@ public class ChessPiece {
 
         ChessPosition possiblePosition;
         ChessMove possibleMove;
+
+        ChessMovement chessMovement;
+
+        switch (currPiece.pieceType) {
+            case PAWN -> validMoves = null;
+            case ROOK -> validMoves = null;
+            case KNIGHT -> validMoves = null;
+            case BISHOP -> validMoves = new BishopMovement().calculateMovements(board, myPosition);
+            case QUEEN -> validMoves = null;
+            case KING -> validMoves = null;
+        }
 
         if (currPiece.pieceType.equals(PieceType.PAWN)) {
 
@@ -109,16 +120,6 @@ public class ChessPiece {
                     validMoves.add(possibleMove);
                 }
             }
-        } else if (currPiece.pieceType.equals(PieceType.ROOK)) {
-
-        } else if (currPiece.pieceType.equals(PieceType.KNIGHT)) {
-
-        } else if (currPiece.pieceType.equals(PieceType.BISHOP)) {
-
-        } else if (currPiece.pieceType.equals(PieceType.QUEEN)) {
-
-        } else if (currPiece.pieceType.equals(PieceType.KING)) {
-
         }
         return validMoves;
     }
