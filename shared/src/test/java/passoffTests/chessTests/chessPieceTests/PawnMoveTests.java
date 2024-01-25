@@ -251,7 +251,7 @@ public class PawnMoveTests {
             validMoves.add(TestFactory.getNewMove(start, end, ChessPiece.PieceType.ROOK));
             validMoves.add(TestFactory.getNewMove(start, end, ChessPiece.PieceType.KNIGHT));
         }
-
+        var v = testPiece.pieceMoves(board, start);
         Assertions.assertEquals(validMoves, testPiece.pieceMoves(board, start), "Wrong moves");
     }
 

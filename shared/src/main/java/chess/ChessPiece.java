@@ -1,7 +1,5 @@
 package chess;
 
-import chess.movement.BishopMovement;
-
 import java.util.Collection;
 
 /**
@@ -67,59 +65,13 @@ public class ChessPiece {
         Collection<ChessMove> validMoves = null;
         ChessPiece currPiece = board.getPiece(myPosition);
 
-        int row = myPosition.getRow();
-        int col = myPosition.getColumn();
-
-        ChessPosition possiblePosition;
-        ChessMove possibleMove;
-
-        ChessMovement chessMovement;
-
         switch (currPiece.pieceType) {
-            case PAWN -> validMoves = null;
-            case ROOK -> validMoves = null;
-            case KNIGHT -> validMoves = null;
-            case BISHOP -> validMoves = new BishopMovement().calculateMovements(board, myPosition);
-            case QUEEN -> validMoves = null;
-            case KING -> validMoves = null;
-        }
-
-        if (currPiece.pieceType.equals(PieceType.PAWN)) {
-
-            // forward advancement move
-            if (currPiece.pieceColor.equals(ChessGame.TeamColor.WHITE)) {
-                possiblePosition = new ChessPosition(row + 1, col);
-                if (board.getPiece(possiblePosition) == null) {
-                    possibleMove = new ChessMove(myPosition, possiblePosition, null);
-                    validMoves.add(possibleMove);
-                }
-            } else {
-                possiblePosition = new ChessPosition(row - 1, col);
-                if (board.getPiece(possiblePosition) == null) {
-                    possibleMove = new ChessMove(myPosition, possiblePosition, null);
-                    validMoves.add(possibleMove);
-                }
-            }
-
-            // diagonal capture move
-            if (currPiece.pieceColor.equals(ChessGame.TeamColor.WHITE)) {
-                possiblePosition = new ChessPosition(row + 1, col + 1);
-                if (board.getPiece(possiblePosition) != null) {
-                    possibleMove = new ChessMove(myPosition, possiblePosition, null);
-                    validMoves.add(possibleMove);
-                }
-                possiblePosition = new ChessPosition(row + 1, col - 1);
-                if (board.getPiece(possiblePosition) != null) {
-                    possibleMove = new ChessMove(myPosition, possiblePosition, null);
-                    validMoves.add(possibleMove);
-                }
-            } else {
-                possiblePosition = new ChessPosition(row - 1, col);
-                if (board.getPiece(possiblePosition) == null) {
-                    possibleMove = new ChessMove(myPosition, possiblePosition, null);
-                    validMoves.add(possibleMove);
-                }
-            }
+            case PAWN -> validMoves = new ChessMovement.PawnMovement().calculateMovements(board, myPosition);
+            case ROOK -> validMoves = new ChessMovement.RookMovement().calculateMovements(board, myPosition);
+            case KNIGHT -> validMoves = new ChessMovement.KnightMovement().calculateMovements(board, myPosition);
+            case BISHOP -> validMoves = new ChessMovement.BishopMovement().calculateMovements(board, myPosition);
+            case QUEEN -> validMoves = new ChessMovement.QueenMovement().calculateMovements(board, myPosition);
+            case KING -> validMoves = new ChessMovement.KingMovement().calculateMovements(board, myPosition);
         }
         return validMoves;
     }

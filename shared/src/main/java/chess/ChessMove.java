@@ -20,6 +20,12 @@ public class ChessMove {
         this.promotionPiece = promotionPiece;
     }
 
+    public ChessMove(ChessMove move) {
+        this.startPosition = move.getStartPosition();
+        this.endPosition = move.getEndPosition();
+        this.promotionPiece = move.getPromotionPiece();
+    }
+
     /**
      * @return ChessPosition of starting location
      */
@@ -42,6 +48,10 @@ public class ChessMove {
      */
     public ChessPiece.PieceType getPromotionPiece() {
         return this.promotionPiece;
+    }
+
+    public void setPromotionPiece(ChessPiece.PieceType type) {
+        this.promotionPiece = type;
     }
 
     @Override
