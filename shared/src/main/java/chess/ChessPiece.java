@@ -62,18 +62,18 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        Collection<ChessMove> validMoves = null;
+        Collection<ChessMove> pieceMoves = null;
         ChessPiece currPiece = board.getPiece(myPosition);
 
         switch (currPiece.pieceType) {
-            case PAWN -> validMoves = new ChessMovement.PawnMovement().calculateMovements(board, myPosition);
-            case ROOK -> validMoves = new ChessMovement.RookMovement().calculateMovements(board, myPosition);
-            case KNIGHT -> validMoves = new ChessMovement.KnightMovement().calculateMovements(board, myPosition);
-            case BISHOP -> validMoves = new ChessMovement.BishopMovement().calculateMovements(board, myPosition);
-            case QUEEN -> validMoves = new ChessMovement.QueenMovement().calculateMovements(board, myPosition);
-            case KING -> validMoves = new ChessMovement.KingMovement().calculateMovements(board, myPosition);
+            case PAWN -> pieceMoves = new ChessMovement.PawnMovement().calculateMovements(board, myPosition);
+            case ROOK -> pieceMoves = new ChessMovement.RookMovement().calculateMovements(board, myPosition);
+            case KNIGHT -> pieceMoves = new ChessMovement.KnightMovement().calculateMovements(board, myPosition);
+            case BISHOP -> pieceMoves = new ChessMovement.BishopMovement().calculateMovements(board, myPosition);
+            case QUEEN -> pieceMoves = new ChessMovement.QueenMovement().calculateMovements(board, myPosition);
+            case KING -> pieceMoves = new ChessMovement.KingMovement().calculateMovements(board, myPosition);
         }
-        return validMoves;
+        return pieceMoves;
     }
 
     @Override

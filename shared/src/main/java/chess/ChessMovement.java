@@ -8,7 +8,7 @@ public abstract class ChessMovement {
     abstract Collection<ChessMove> calculateMovements(ChessBoard board, ChessPosition startPosition);
 
     private Collection<ChessMove> moveToEnd(ChessBoard board, ChessPosition startPosition, ChessPosition endPosition) {
-        Collection<ChessMove> validMoves = new HashSet<>();
+        Collection<ChessMove> pieceMoves = new HashSet<>();
 
         int rowDirection = endPosition.getRow() - startPosition.getRow();
         int colDirection = endPosition.getColumn() - startPosition.getColumn();
@@ -18,10 +18,10 @@ public abstract class ChessMovement {
         while (inBounds(endPosition)) {
             ChessPiece movePiece = board.getPiece(endPosition);
             if (movePiece == null) {
-                validMoves.add(new ChessMove(startPosition, endPosition, null));
+                pieceMoves.add(new ChessMove(startPosition, endPosition, null));
             } else {
                 if (!currPiece.getTeamColor().equals(movePiece.getTeamColor())) {
-                    validMoves.add(new ChessMove(startPosition, endPosition, null));
+                    pieceMoves.add(new ChessMove(startPosition, endPosition, null));
                     break;
                 } else {
                     break;
@@ -29,20 +29,20 @@ public abstract class ChessMovement {
             }
             endPosition = new ChessPosition(endPosition.getRow() + rowDirection, endPosition.getColumn() + colDirection);
         }
-        return validMoves;
+        return pieceMoves;
     }
 
     private Collection<ChessMove> checkNeighbors(ChessBoard board, ChessPosition startPosition, int rowDirection, int colDirection) {
-        Collection<ChessMove> validMoves = new HashSet<>();
+        Collection<ChessMove> pieceMoves = new HashSet<>();
         ChessPosition rowChangePosition = new ChessPosition(startPosition.getRow() + 2*rowDirection, startPosition.getColumn() + colDirection);
         ChessPosition colChangePosition = new ChessPosition(startPosition.getRow() + rowDirection, startPosition.getColumn() + 2*colDirection);
         if(inBounds(rowChangePosition) && isValidMove(board, startPosition, rowChangePosition)) {
-            validMoves.add(new ChessMove(startPosition, rowChangePosition, null));
+            pieceMoves.add(new ChessMove(startPosition, rowChangePosition, null));
         }
         if(inBounds(colChangePosition) && isValidMove(board, startPosition, colChangePosition)) {
-            validMoves.add(new ChessMove(startPosition, colChangePosition, null));
+            pieceMoves.add(new ChessMove(startPosition, colChangePosition, null));
         }
-        return validMoves;
+        return pieceMoves;
     }
 
     boolean inBounds(ChessPosition position) {
@@ -60,7 +60,7 @@ public abstract class ChessMovement {
 
         @Override
         Collection<ChessMove> calculateMovements(ChessBoard board, ChessPosition startPosition) {
-            Collection<ChessMove> validMoves = new HashSet<>();
+            Collection<ChessMove> pieceMoves = new HashSet<>();
             ChessPiece currPiece = board.getPiece(startPosition);
             for (int i = -1; i <= 1; i++) {
                 for (int j = -1; j<= 1; j++) {
@@ -68,12 +68,12 @@ public abstract class ChessMovement {
                     if (inBounds(endPosition)) {
                         ChessMove endMove = (super.isValidMove(board, startPosition, endPosition)) ? new ChessMove(startPosition, endPosition, null) : null;
                         if (endMove != null) {
-                            validMoves.add(endMove);
+                            pieceMoves.add(endMove);
                         }
                     }
                 }
             }
-            return  validMoves;
+            return  pieceMoves;
         }
     }
 
@@ -81,7 +81,7 @@ public abstract class ChessMovement {
 
         @Override
         Collection<ChessMove> calculateMovements(ChessBoard board, ChessPosition startPosition) {
-            Collection<ChessMove> validMoves = new HashSet<>();
+            Collection<ChessMove> pieceMoves = new HashSet<>();
             ChessPiece.PieceType promotionPiece = null;
 
             ChessPiece currPiece = board.getPiece(startPosition);
@@ -99,41 +99,41 @@ public abstract class ChessMovement {
                 if (forwardMove != null) {
                     for (int i = 1; i <= 4; i++) {
                         forwardMove.setPromotionPiece((ChessPiece.PieceType.values()[i]));
-                        validMoves.add(new ChessMove(forwardMove));
+                        pieceMoves.add(new ChessMove(forwardMove));
                     }
                 }
                 if (diagonalMove1 != null) {
                     for (int i = 1; i <= 4; i++) {
                         diagonalMove1.setPromotionPiece((ChessPiece.PieceType.values()[i]));
-                        validMoves.add(new ChessMove(diagonalMove1));
+                        pieceMoves.add(new ChessMove(diagonalMove1));
                     }
                 }
                 if (diagonalMove2 != null) {
                     for (int i = 1; i <= 4; i++) {
                         diagonalMove2.setPromotionPiece((ChessPiece.PieceType.values()[i]));
-                        validMoves.add(new ChessMove(diagonalMove2));
+                        pieceMoves.add(new ChessMove(diagonalMove2));
                     }
                 }
             } else {
                 if (forwardMove != null) {
-                    validMoves.add(forwardMove);
+                    pieceMoves.add(forwardMove);
                     if ((direction == 1 && startPosition.getRow() == 2) || (direction == -1 && startPosition.getRow() == 7)) {
                         ChessPosition forwardTwo = new ChessPosition(startPosition.getRow() + 2*direction, startPosition.getColumn());
                         ChessMove forwardTwoMove = (board.getPiece(forwardTwo) == null) ? new ChessMove(startPosition, forwardTwo, null) : null;
                         if (forwardTwoMove != null) {
-                            validMoves.add(forwardTwoMove);
+                            pieceMoves.add(forwardTwoMove);
                         }
                     }
                 }
                 if (diagonalMove1 != null) {
-                    validMoves.add(diagonalMove1);
+                    pieceMoves.add(diagonalMove1);
                 }
                 if (diagonalMove2 != null) {
-                    validMoves.add(diagonalMove2);
+                    pieceMoves.add(diagonalMove2);
                 }
             }
 
-            return validMoves;
+            return pieceMoves;
         }
 
     }
@@ -142,12 +142,12 @@ public abstract class ChessMovement {
 
         @Override
         public Collection<ChessMove> calculateMovements(ChessBoard board, ChessPosition startPosition) {
-            Collection<ChessMove> validMoves = new HashSet<>();
-            validMoves.addAll(super.moveToEnd(board, startPosition, new ChessPosition(startPosition.getRow()+1, startPosition.getColumn()+1)));
-            validMoves.addAll(super.moveToEnd(board, startPosition, new ChessPosition(startPosition.getRow()+1, startPosition.getColumn()-1)));
-            validMoves.addAll(super.moveToEnd(board, startPosition, new ChessPosition(startPosition.getRow()-1, startPosition.getColumn()+1)));
-            validMoves.addAll(super.moveToEnd(board, startPosition, new ChessPosition(startPosition.getRow()-1, startPosition.getColumn()-1)));
-            return validMoves;
+            Collection<ChessMove> pieceMoves = new HashSet<>();
+            pieceMoves.addAll(super.moveToEnd(board, startPosition, new ChessPosition(startPosition.getRow()+1, startPosition.getColumn()+1)));
+            pieceMoves.addAll(super.moveToEnd(board, startPosition, new ChessPosition(startPosition.getRow()+1, startPosition.getColumn()-1)));
+            pieceMoves.addAll(super.moveToEnd(board, startPosition, new ChessPosition(startPosition.getRow()-1, startPosition.getColumn()+1)));
+            pieceMoves.addAll(super.moveToEnd(board, startPosition, new ChessPosition(startPosition.getRow()-1, startPosition.getColumn()-1)));
+            return pieceMoves;
         }
 
     }
@@ -156,12 +156,12 @@ public abstract class ChessMovement {
 
         @Override
         Collection<ChessMove> calculateMovements(ChessBoard board, ChessPosition startPosition) {
-            Collection<ChessMove> validMoves = new HashSet<>();
-            validMoves.addAll(super.moveToEnd(board, startPosition, new ChessPosition(startPosition.getRow(), startPosition.getColumn()+1)));
-            validMoves.addAll(super.moveToEnd(board, startPosition, new ChessPosition(startPosition.getRow(), startPosition.getColumn()-1)));
-            validMoves.addAll(super.moveToEnd(board, startPosition, new ChessPosition(startPosition.getRow()+1, startPosition.getColumn())));
-            validMoves.addAll(super.moveToEnd(board, startPosition, new ChessPosition(startPosition.getRow()-1, startPosition.getColumn())));
-            return validMoves;
+            Collection<ChessMove> pieceMoves = new HashSet<>();
+            pieceMoves.addAll(super.moveToEnd(board, startPosition, new ChessPosition(startPosition.getRow(), startPosition.getColumn()+1)));
+            pieceMoves.addAll(super.moveToEnd(board, startPosition, new ChessPosition(startPosition.getRow(), startPosition.getColumn()-1)));
+            pieceMoves.addAll(super.moveToEnd(board, startPosition, new ChessPosition(startPosition.getRow()+1, startPosition.getColumn())));
+            pieceMoves.addAll(super.moveToEnd(board, startPosition, new ChessPosition(startPosition.getRow()-1, startPosition.getColumn())));
+            return pieceMoves;
         }
     }
 
@@ -169,10 +169,10 @@ public abstract class ChessMovement {
 
         @Override
         Collection<ChessMove> calculateMovements(ChessBoard board, ChessPosition startPosition) {
-            Collection<ChessMove> validMoves = new HashSet<>();
-            validMoves.addAll(new BishopMovement().calculateMovements(board, startPosition));
-            validMoves.addAll(new RookMovement().calculateMovements(board, startPosition));
-            return validMoves;
+            Collection<ChessMove> pieceMoves = new HashSet<>();
+            pieceMoves.addAll(new BishopMovement().calculateMovements(board, startPosition));
+            pieceMoves.addAll(new RookMovement().calculateMovements(board, startPosition));
+            return pieceMoves;
         }
     }
 
@@ -180,12 +180,12 @@ public abstract class ChessMovement {
 
         @Override
         Collection<ChessMove> calculateMovements(ChessBoard board, ChessPosition startPosition) {
-            Collection<ChessMove> validMoves = new HashSet<>();
-            validMoves.addAll(super.checkNeighbors(board, startPosition, 1, 1));
-            validMoves.addAll(super.checkNeighbors(board, startPosition, 1, -1));
-            validMoves.addAll(super.checkNeighbors(board, startPosition, -1, 1));
-            validMoves.addAll(super.checkNeighbors(board, startPosition, -1, -1));
-            return validMoves;
+            Collection<ChessMove> pieceMoves = new HashSet<>();
+            pieceMoves.addAll(super.checkNeighbors(board, startPosition, 1, 1));
+            pieceMoves.addAll(super.checkNeighbors(board, startPosition, 1, -1));
+            pieceMoves.addAll(super.checkNeighbors(board, startPosition, -1, 1));
+            pieceMoves.addAll(super.checkNeighbors(board, startPosition, -1, -1));
+            return pieceMoves;
         }
     }
 }

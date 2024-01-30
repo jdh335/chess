@@ -10,7 +10,6 @@ import java.util.*;
  */
 public class ChessBoard {
     private ChessPiece[][] board;
-
     public ChessBoard() {
         this.board = new ChessPiece[8][8];
     }
@@ -34,6 +33,17 @@ public class ChessBoard {
      */
     public ChessPiece getPiece(ChessPosition position) {
         return board[position.getRow()-1][position.getColumn()-1];
+    }
+
+    public ChessBoard duplicateBoard() {
+        ChessBoard newBoard = new ChessBoard();
+        for (int i = 1; i <= 8; i++) {
+            for (int j = 1; j <= 8; j++) {
+                ChessPosition currPosition = new ChessPosition(i, j);
+                newBoard.addPiece(currPosition, this.getPiece(currPosition));
+            }
+        }
+        return newBoard;
     }
 
     /**
