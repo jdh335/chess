@@ -51,6 +51,7 @@ public abstract class ChessMovement {
     }
 
     boolean isValidMove(ChessBoard board, ChessPosition startPosition, ChessPosition endPosition) {
+        //if (inBounds(startPosition) && inBounds(endPosition)) return false;
         ChessPiece startPiece = board.getPiece(startPosition);
         ChessPiece endPiece = board.getPiece(endPosition);
         return (endPiece == null) ? true : !endPiece.getTeamColor().equals(startPiece.getTeamColor());
@@ -90,6 +91,7 @@ public abstract class ChessMovement {
             ChessPosition forward = new ChessPosition(startPosition.getRow() + direction, startPosition.getColumn());
             ChessPosition diagonal1 = new ChessPosition(startPosition.getRow() + direction, startPosition.getColumn() + direction);
             ChessPosition diagonal2 = new ChessPosition(startPosition.getRow() + direction, startPosition.getColumn() - direction);
+
 
             ChessMove forwardMove = (board.getPiece(forward) == null) ? new ChessMove(startPosition, forward, null) : null;
             ChessMove diagonalMove1 = (board.getPiece(diagonal1) != null && super.isValidMove(board, startPosition, diagonal1)) ? new ChessMove(startPosition, diagonal1, null) : null;
