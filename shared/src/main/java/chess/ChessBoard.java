@@ -10,8 +10,22 @@ import java.util.*;
  */
 public class ChessBoard {
     private ChessPiece[][] board;
+
+    private final Map<ChessPosition, ChessPiece> whitePieces = new HashMap<>();
+
+    private final Map<ChessPosition, ChessPiece> blackPieces = new HashMap<>();
+
     public ChessBoard() {
         this.board = new ChessPiece[8][8];
+    }
+
+    public Map<ChessPosition, ChessPiece> getTeamPieces(ChessGame.TeamColor team) {
+        return (team.equals(ChessGame.TeamColor.WHITE) ? this.whitePieces : this.blackPieces);
+    }
+
+    boolean inBounds(ChessPosition position) {
+        return (position.getRow() <= 8 && position.getRow() >= 1) &&
+                (position.getColumn() <= 8 && position.getColumn() >= 1);
     }
 
     /**
@@ -21,7 +35,15 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        board[position.getRow()-1][position.getColumn()-1] = piece;
+        if (this.inBounds(position)) {
+            ChessPiece oldPiece = this.getPiece(position);
+            Map<ChessPosition, ChessPiece> newPieceTeam = piece.getTeamColor().equals(ChessGame.TeamColor.WHITE) ? whitePieces : blackPieces;
+            Map<ChessPosition, ChessPiece> oldPieceTeam = (oldPiece != null &&
+                    oldPiece.getTeamColor().equals(ChessGame.TeamColor.WHITE)) ? whitePieces : blackPieces;
+            oldPieceTeam.remove(position);
+            newPieceTeam.put(position, piece);
+            board[position.getRow() - 1][position.getColumn() - 1] = piece;
+        }
     }
 
     /**
@@ -32,31 +54,8 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
+        if (!this.inBounds(position)) return null;
         return board[position.getRow()-1][position.getColumn()-1];
-    }
-
-    public ChessBoard duplicateBoard() {
-        ChessBoard newBoard = new ChessBoard();
-        for (int i = 1; i <= 8; i++) {
-            for (int j = 1; j <= 8; j++) {
-                ChessPosition currPosition = new ChessPosition(i, j);
-                newBoard.addPiece(currPosition, this.getPiece(currPosition));
-            }
-        }
-        return newBoard;
-    }
-
-    public ChessPosition getKingPosition(ChessGame.TeamColor teamColor) {
-        for (int i = 1; i <= 8; i++) {
-            for (int j = 1; j <= 8; j++) {
-                ChessPosition currPosition = new ChessPosition(i, j);
-                ChessPiece currPiece = this.getPiece(currPosition);
-                if (currPiece != null && currPiece.pieceType == ChessPiece.PieceType.KING && currPiece.pieceColor == teamColor) {
-                    return currPosition;
-                }
-            }
-        }
-        return null;
     }
 
     /**
@@ -67,6 +66,7 @@ public class ChessBoard {
         // Start with an empty board
         this.board = new ChessPiece[8][8];
         ChessPosition currPosition;
+
         // Insert pawns into the game board
         for (int i = 1; i <= 8; i++ ) {
             currPosition = new ChessPosition(2, i);
@@ -74,8 +74,8 @@ public class ChessBoard {
             currPosition = new ChessPosition(7, i);
             this.addPiece(currPosition, new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN));
         }
-        // Insert all other pieces into the game board
 
+        // Insert all other pieces into the game board
         for (int i = 1; i <= 8; i++) {
             // Insert rooks into the game board
             if (i == 1 || i == 8) {
@@ -103,6 +103,32 @@ public class ChessBoard {
                 this.addPiece(new ChessPosition(8, i), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING));
             }
         }
+    }
+
+    public ChessBoard duplicateBoard() {
+        ChessBoard newBoard = new ChessBoard();
+        Map<ChessPosition, ChessPiece> blackPieces = this.getTeamPieces(ChessGame.TeamColor.BLACK);
+        Map<ChessPosition, ChessPiece> whitePieces = this.getTeamPieces(ChessGame.TeamColor.WHITE);
+
+        for (ChessPosition position : blackPieces.keySet()) {
+            newBoard.addPiece(position, blackPieces.get(position));
+        }
+        for (ChessPosition position : whitePieces.keySet()) {
+            newBoard.addPiece(position, whitePieces.get(position));
+        }
+
+        return newBoard;
+    }
+
+    public ChessPosition getKingPosition(ChessGame.TeamColor teamColor) {
+        Map<ChessPosition, ChessPiece> teamPieces = (teamColor.equals(ChessGame.TeamColor.WHITE)) ?
+                this.getTeamPieces(ChessGame.TeamColor.WHITE) : this.getTeamPieces(ChessGame.TeamColor.BLACK);
+        for (ChessPosition position : teamPieces.keySet()) {
+            if (this.getPiece(position).getPieceType().equals(ChessPiece.PieceType.KING)) {
+                return position;
+            }
+        }
+        return null;
     }
 
     @Override
