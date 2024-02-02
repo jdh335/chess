@@ -25,7 +25,8 @@ public abstract class ChessMovement {
                 }
                 break;
             }
-            endPosition = new ChessPosition(endPosition.getRow() + rowDirection, endPosition.getColumn() + colDirection);
+            endPosition = new ChessPosition(endPosition.getRow() + rowDirection,
+                    endPosition.getColumn() + colDirection);
         }
         return pieceMoves;
     }
@@ -168,5 +169,7 @@ public abstract class ChessMovement {
             pieceMoves.addAll(this.checkNeighbors(board, startPosition, -1, -1));
             return pieceMoves;
         }
+
     }
+
 }
