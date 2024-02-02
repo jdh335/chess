@@ -13,11 +13,10 @@ import java.util.Map;
 public class ChessGame {
 
     private TeamColor teamTurn;
+
     private ChessBoard board;
 
-    public ChessGame() {
-
-    }
+    public ChessGame() { }
 
     /**
      * Enum identifying the 2 possible teams in a chess game
@@ -29,36 +28,28 @@ public class ChessGame {
     /**
      * @return Which team's turn it is
      */
-    public TeamColor getTeamTurn() {
-        return this.teamTurn;
-    }
+    public TeamColor getTeamTurn() { return this.teamTurn; }
 
     /**
      * Set's which teams turn it is
      *
      * @param team the team whose turn it is
      */
-    public void setTeamTurn(TeamColor team) {
-        this.teamTurn = team;
-    }
+    public void setTeamTurn(TeamColor team) { this.teamTurn = team; }
 
     /**
      * Sets this game's chessboard with a given board
      *
      * @param board the new board to use
      */
-    public void setBoard(ChessBoard board) {
-        this.board = board;
-    }
+    public void setBoard(ChessBoard board) { this.board = board; }
 
     /**
      * Gets the current chessboard
      *
      * @return the chessboard
      */
-    public ChessBoard getBoard() {
-        return this.board;
-    }
+    public ChessBoard getBoard() { return this.board; }
 
     /**
      * Gets a valid moves for a piece at the given location
@@ -106,7 +97,7 @@ public class ChessGame {
 
             this.setTeamTurn((this.getTeamTurn().equals(TeamColor.WHITE)) ? TeamColor.BLACK : TeamColor.WHITE);
         } else {
-            throw new InvalidMoveException("Invalid Move") ;
+            throw new InvalidMoveException("Invalid Move");
         }
     }
 
@@ -139,9 +130,10 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        //TODO : Doesn't work properly, check if theres a piece that can block or kill the piece putting king in check
-        Collection<ChessMove> kingMoves = this.validMoves(this.board.getKingPosition(teamColor));
-        return isInCheck(teamColor) && kingMoves.isEmpty();
+        for (ChessPosition position : board.getTeamPieces(teamColor).keySet()) {
+            if (!validMoves(position).isEmpty()) { return false; }
+        }
+        return isInCheck(teamColor);
     }
 
     /**
@@ -152,14 +144,10 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        //TODO : Doesn't work properly
-        if (isInCheck(teamColor)) return false;
         for (ChessPosition position : board.getTeamPieces(teamColor).keySet()) {
-            if (!validMoves(position).isEmpty()) {
-                return false;
-            }
+            if (!validMoves(position).isEmpty()) { return false; }
         }
-        return true;
+        return !isInCheck(teamColor);
     }
 
 }
