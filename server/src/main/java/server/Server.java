@@ -1,11 +1,10 @@
 package server;
 
-import chess.ChessGame;
-import chess.ChessPiece;
 import com.google.gson.Gson;
-import dataAccess.memoryDao.MemoryAuthDao;
-import dataAccess.memoryDao.MemoryGameDao;
-import dataAccess.memoryDao.MemoryUserDao;
+import dataAccess.exception.DataAccessException;
+import dataAccess.SQLDao.SQLAuthDao;
+import dataAccess.SQLDao.SQLGameDao;
+import dataAccess.SQLDao.SQLUserDao;
 import dataAccess.interfaceDao.AuthDao;
 import dataAccess.interfaceDao.GameDao;
 import dataAccess.interfaceDao.UserDao;
@@ -16,20 +15,41 @@ import spark.*;
 
 public class Server {
 
-    private final AuthDao authDao = new MemoryAuthDao();
-    private final UserDao userDao = new MemoryUserDao();
-    private final GameDao gameDao = new MemoryGameDao();
 
     public static void main(String[] args) {
-        var piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
-        System.out.println("♕ 240 Chess Server: " + piece);
-        new Server().run(8080);
+        try {
+            var port = 8080;
+            if (args.length >= 1) {
+                port = Integer.parseInt(args[0]);
+            }
+
+            var serverPort = new Server().run(port);
+            System.out.printf("Server started on port %d%n", serverPort);
+            return;
+        } catch (Throwable ex) {
+            System.out.printf("Unable to start server: %s%n", ex.getMessage());
+        }
+        System.out.println("""
+                Pet Server:
+                java ServerMain <port> [<dburl> <dbuser> <dbpassword> <dbname>]
+                """);
     }
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
         Spark.staticFiles.location("web");
         Spark.init();
+
+        AuthDao authDao = null;
+        UserDao userDao = null;
+        GameDao gameDao = null;
+        try {
+            authDao = new SQLAuthDao();
+            userDao = new SQLUserDao();
+            gameDao = new SQLGameDao();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
 
         UserHandler userHandler = new UserHandler(userDao, authDao);
         GameHandler gameHandler = new GameHandler(userDao, authDao, gameDao);

@@ -27,12 +27,12 @@ public class GameService {
         this.gameDao = gameDao;
     }
 
-    public Collection<GameData> listGames(String authToken) throws dataAccess.exception.DataAccessException, UnauthorizedException {
+    public Collection<GameData> listGames(String authToken) throws DataAccessException, UnauthorizedException {
         verifySession(authToken);
         return gameDao.getAllGames();
     }
 
-    public Integer createGame(String authToken, String gameName) throws dataAccess.exception.DataAccessException, UnauthorizedException {
+    public Integer createGame(String authToken, String gameName) throws DataAccessException, UnauthorizedException {
         verifySession(authToken);
 
         Integer gameID = gameDao.nextGameID();
@@ -42,7 +42,7 @@ public class GameService {
         return gameID;
     }
 
-    public void joinGame(String authToken, String playerColor, Integer gameID) throws dataAccess.exception.DataAccessException, BadRequestException, AlreadyTakenException, UnauthorizedException {
+    public void joinGame(String authToken, String playerColor, Integer gameID) throws DataAccessException, BadRequestException, AlreadyTakenException, UnauthorizedException {
         AuthData authData = verifySession(authToken);
         GameData oldGame = gameDao.getGame(gameID);
         if (oldGame == null) throw new BadRequestException();

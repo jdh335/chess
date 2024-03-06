@@ -23,7 +23,7 @@ public class GameHandler {
         this.gameService = new GameService(userDao, authDao, gameDao);
     }
 
-    public Object listGames(Request req, Response res) throws dataAccess.exception.DataAccessException, UnauthorizedException {
+    public Object listGames(Request req, Response res) throws DataAccessException, UnauthorizedException {
         String authToken = req.headers("Authorization");
 
         Collection<GameData> gameData = gameService.listGames(authToken);
@@ -32,7 +32,7 @@ public class GameHandler {
         return new Gson().toJson(new games(gameData.toArray(new GameData[0])));
     }
 
-    public Object createGame(Request req, Response res) throws dataAccess.exception.DataAccessException, UnauthorizedException {
+    public Object createGame(Request req, Response res) throws DataAccessException, UnauthorizedException {
         String authToken = req.headers("Authorization");
         GameName gameName = new Gson().fromJson(req.body(), GameName.class);
 
