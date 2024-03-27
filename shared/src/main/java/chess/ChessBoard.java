@@ -13,6 +13,7 @@ public class ChessBoard {
 
     public ChessBoard() {
         board = new ChessPiece[8][8];
+//        this.resetBoard();
     }
 
     private final Map<ChessPosition, ChessPiece> whitePieces = new HashMap<>();

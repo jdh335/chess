@@ -16,7 +16,10 @@ public class ChessGame {
 
     private ChessBoard board;
 
-    public ChessGame() { }
+    public ChessGame() {
+        this.teamTurn = TeamColor.WHITE;
+//        this.board = new ChessBoard();
+    }
 
     /**
      * Enum identifying the 2 possible teams in a chess game

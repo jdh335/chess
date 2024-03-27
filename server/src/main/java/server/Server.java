@@ -16,6 +16,7 @@ import spark.*;
 public class Server {
 
 
+
     public static void main(String[] args) {
         try {
             var port = 8080;
@@ -39,6 +40,7 @@ public class Server {
         Spark.port(desiredPort);
         Spark.staticFiles.location("web");
         Spark.init();
+
 
         AuthDao authDao = null;
         UserDao userDao = null;
@@ -89,9 +91,8 @@ public class Server {
             default:
                 res.status(500);
         }
+        record ExceptionMessage(String message) {}
         res.body(new Gson().toJson(new ExceptionMessage("Error: " + e.getMessage())));
     }
-
-    record ExceptionMessage(String message) {}
 
 }

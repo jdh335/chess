@@ -26,6 +26,7 @@ public class GameHandler {
     public Object listGames(Request req, Response res) throws DataAccessException, UnauthorizedException {
         String authToken = req.headers("Authorization");
 
+        record games(GameData[] games) {}
         Collection<GameData> gameData = gameService.listGames(authToken);
 
         res.status(200);
@@ -34,8 +35,9 @@ public class GameHandler {
 
     public Object createGame(Request req, Response res) throws DataAccessException, UnauthorizedException {
         String authToken = req.headers("Authorization");
+        record GameName (String gameName) {}
         GameName gameName = new Gson().fromJson(req.body(), GameName.class);
-
+        record GameID(Integer gameID) {}
         Integer gameID = gameService.createGame(authToken, gameName.gameName());
 
         res.status(200);
@@ -44,17 +46,15 @@ public class GameHandler {
 
     public Object joinGame(Request req, Response res) throws DataAccessException, UnauthorizedException, BadRequestException, AlreadyTakenException {
         String authToken = req.headers("Authorization");
+        record PlayerData(String playerColor, Integer gameID) {}
         PlayerData playerData = new Gson().fromJson(req.body(), PlayerData.class);
 
-        gameService.joinGame(authToken, playerData.playerColor(), playerData.gameID());
+        gameService.joinGame(authToken, playerData.playerColor().toUpperCase(), playerData.gameID());
 
         res.status(200);
         return "";
     }
 
-    record PlayerData(String playerColor, Integer gameID) {}
-    record GameID(Integer gameID) {}
-    record GameName (String gameName) {}
-    record games(GameData[] games) {}
+
 }
 

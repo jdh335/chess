@@ -17,15 +17,14 @@ public class ChessPiece {
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
         this.pieceColor = pieceColor;
         this.pieceType = type;
-        switch (type) {
-            case PAWN -> this.pieceChar = (pieceColor.equals(ChessGame.TeamColor.WHITE)) ? "♙" : "♟";
-            case ROOK -> this.pieceChar = (pieceColor.equals(ChessGame.TeamColor.WHITE)) ? "♖" : "♜";
-            case KNIGHT -> this.pieceChar = (pieceColor.equals(ChessGame.TeamColor.WHITE)) ? "♘" : "♞";
-            case BISHOP -> this.pieceChar = (pieceColor.equals(ChessGame.TeamColor.WHITE)) ? "♗" : "♝";
-            case QUEEN -> this.pieceChar = (pieceColor.equals(ChessGame.TeamColor.WHITE)) ? "♕" : "♛";
-            case KING -> this.pieceChar = (pieceColor.equals(ChessGame.TeamColor.WHITE)) ? "♔" : "♚";
-
-        }
+        this.pieceChar = switch (type) {
+            case PAWN -> "♟";
+            case ROOK -> "♜";
+            case KNIGHT -> "♞";
+            case BISHOP -> "♝";
+            case QUEEN -> "♛";
+            case KING -> "♚";
+        };
     }
 
     /**

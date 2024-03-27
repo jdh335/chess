@@ -8,6 +8,7 @@ import dataAccess.interfaceDao.AuthDao;
 import dataAccess.interfaceDao.UserDao;
 import model.AuthData;
 import model.UserData;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 public class UserService {
 
@@ -26,6 +27,7 @@ public class UserService {
 
         UserData user = userDao.getUser(request.getUsername());
         if (user != null) throw new AlreadyTakenException();
+        request.setPassword(hashPassword(request.getPassword()));
         userDao.createUser(request);
 
         return authDao.createAuth(request.getUsername());
@@ -33,7 +35,8 @@ public class UserService {
 
     public AuthData login(UserData request) throws DataAccessException, UnauthorizedException {
         UserData user = userDao.getUser(request.getUsername());
-        if (user == null || !user.getPassword().equals(request.getPassword())) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        if (user == null || !encoder.matches(request.getPassword(), user.getPassword())) {
             throw new UnauthorizedException();
         }
         return authDao.createAuth(request.getUsername());
@@ -48,6 +51,11 @@ public class UserService {
         AuthData authData = authDao.getAuth(authToken);
         if (authData == null) throw new UnauthorizedException();
         return authData;
+    }
+
+    String hashPassword(String clearTextPassword) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        return encoder.encode(clearTextPassword);
     }
 
 }
